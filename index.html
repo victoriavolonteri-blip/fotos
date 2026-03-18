@@ -835,7 +835,11 @@ async function loadData() {
       if (!protocol) continue;
 
       const foldKey = protocol.toUpperCase();
-      const matchedFolder = folders.find(f => f.name.trim().toUpperCase().startsWith(foldKey));
+      // Matchear protocolo seguido de espacio o fin de string (evita que 18-1310 matchee 18-13106)
+      const matchedFolder = folders.find(f => {
+        const name = f.name.trim().toUpperCase();
+        return name === foldKey || name.startsWith(foldKey + ' ') || name.startsWith(foldKey + ';');
+      });
       const caseFolderId = matchedFolder ? matchedFolder.id : null;
 
       allCases.push({
