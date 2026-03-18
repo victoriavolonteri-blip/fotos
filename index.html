@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Archivo de Casos · Dermatopatología</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --ink-soft: #3d3d5c;
+    --ink-muted: #8888aa;
+    --paper: #f7f5f0;
+    --paper-warm: #ede9e0;
+    --paper-card: #ffffff;
+    --accent: #c4622d;
+    --accent-soft: #e8a882;
+    --accent-pale: #f5e8df;
+    --teal: #2d7c8a;
+    --teal-pale: #dceef1;
+    --gold: #b8962e;
+    --gold-pale: #f5edcc;
+    --border: #ddd8cc;
+    --shadow-sm: 0 1px 3px rgba(26,26,46,0.08);
+    --shadow-md: 0 4px 16px rgba(26,26,46,0.12);
+    --shadow-lg: 0 12px 40px rgba(26,26,46,0.16);
+    --radius: 12px;
+    --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--ink);
+    color: white;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-md);
+  }
+  .logo {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  .logo-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.02em;
+    color: white;
+  }
+  .logo-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent-soft);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  #btn-auth {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 0.45rem 1.1rem;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  #btn-auth:hover { background: #b0541f; }
+  #auth-status {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.55);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── LAYOUT ── */
+  .app {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  /* ── SETUP PANEL ── */
+  #setup-panel {
+    background: var(--paper-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-sm);
+  }
+  #setup-panel h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    color: var(--ink);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .setup-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 1rem;
+    align-items: end;
+  }
+  .field-group label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .field-group input {
+    width: 100%;
+    padding: 0.6rem 0.9rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--ink);
+    background: var(--paper);
+    transition: var(--transition);
+  }
+  .field-group input:focus {
+    outline: none;
+    border-color: var(--teal);
+    background: white;
+  }
+  .field-group input::placeholder { color: var(--ink-muted); }
+  .btn-primary {
+    background: var(--teal);
+    color: white;
+    border: none;
+    padding: 0.65rem 1.4rem;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+  }
+  .btn-primary:hover { background: #236875; }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .setup-hint {
+    margin-top: 0.8rem;
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+    font-style: italic;
+  }
+  .setup-hint a { color: var(--teal); }
+
+  /* ── CONTROLES ── */
+  .controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 240px;
+  }
+  .search-wrap svg {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ink-muted);
+    pointer-events: none;
+  }
+  #search-input {
+    width: 100%;
+    padding: 0.65rem 0.9rem 0.65rem 2.5rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    background: white;
+    transition: var(--transition);
+  }
+  #search-input:focus { outline: none; border-color: var(--teal); }
+  .filter-wrap select {
+    padding: 0.65rem 0.9rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    color: var(--ink);
+    background: white;
+    cursor: pointer;
+    min-width: 180px;
+  }
+  .filter-wrap select:focus { outline: none; border-color: var(--teal); }
+  .stats-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--ink-muted);
+    background: var(--paper-warm);
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .view-toggle {
+    display: flex;
+    gap: 0.3rem;
+    background: var(--paper-warm);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.25rem;
+  }
+  .view-btn {
+    background: none;
+    border: none;
+    padding: 0.35rem 0.6rem;
+    border-radius: 5px;
+    cursor: pointer;
+    color: var(--ink-muted);
+    transition: var(--transition);
+  }
+  .view-btn.active { background: white; color: var(--ink); box-shadow: var(--shadow-sm); }
+
+  /* ── TAGS DE DIAGNÓSTICO ── */
+  .dx-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+  .dx-tag {
+    background: white;
+    border: 1.5px solid var(--border);
+    color: var(--ink-soft);
+    padding: 0.3rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 500;
+  }
+  .dx-tag:hover { border-color: var(--teal); color: var(--teal); }
+  .dx-tag.active { background: var(--teal); border-color: var(--teal); color: white; }
+  .dx-tag .count {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    opacity: 0.7;
+    margin-left: 0.3rem;
+  }
+
+  /* ── GRID DE CASOS ── */
+  #cases-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.2rem;
+  }
+  #cases-grid.list-view {
+    grid-template-columns: 1fr;
+  }
+
+  .case-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+  }
+  .case-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--teal);
+  }
+  .case-card.no-photos {
+    opacity: 0.7;
+  }
+  .case-thumb {
+    width: 100%;
+    aspect-ratio: 4/3;
+    background: var(--paper-warm);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .case-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  .case-card:hover .case-thumb img { transform: scale(1.04); }
+  .thumb-count {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    background: rgba(26,26,46,0.75);
+    color: white;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    backdrop-filter: blur(4px);
+  }
+  .no-thumb-icon {
+    color: var(--ink-muted);
+    opacity: 0.4;
+  }
+  .case-body {
+    padding: 0.9rem 1rem;
+  }
+  .case-protocol {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent);
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.3rem;
+  }
+  .case-dx {
+    font-size: 0.88rem;
+    color: var(--ink);
+    font-weight: 400;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .case-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  .photo-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    color: var(--ink-muted);
+    font-family: 'DM Mono', monospace;
+  }
+  .photo-pill svg { width: 12px; height: 12px; }
+
+  /* LIST VIEW */
+  #cases-grid.list-view .case-card {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+  }
+  #cases-grid.list-view .case-thumb {
+    aspect-ratio: unset;
+    height: 100%;
+    min-height: 90px;
+  }
+  #cases-grid.list-view .case-body {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  #cases-grid.list-view .case-protocol { margin-bottom: 0; }
+  #cases-grid.list-view .case-dx { -webkit-line-clamp: 1; }
+
+  /* ── MODAL ── */
+  #modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(10,10,20,0.85);
+    backdrop-filter: blur(6px);
+    padding: 1.5rem;
+    overflow-y: auto;
+  }
+  #modal.open { display: flex; align-items: flex-start; justify-content: center; }
+  .modal-box {
+    background: white;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 960px;
+    margin: auto;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    animation: slideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .modal-header {
+    padding: 1.4rem 1.6rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    background: var(--paper);
+  }
+  .modal-protocol {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+  }
+  .modal-dx {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.25rem;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  .modal-close {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-muted);
+    flex-shrink: 0;
+    transition: var(--transition);
+  }
+  .modal-close:hover { background: var(--accent-pale); color: var(--accent); border-color: var(--accent-soft); }
+  .modal-body { padding: 1.5rem 1.6rem; }
+
+  /* FOTO GRANDE */
+  .modal-big-photo {
+    width: 100%;
+    max-height: 480px;
+    object-fit: contain;
+    border-radius: 10px;
+    background: var(--paper-warm);
+    margin-bottom: 1rem;
+    display: block;
+  }
+  .modal-carousel-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .nav-btn {
+    background: var(--paper-warm);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--ink-soft);
+  }
+  .nav-btn:hover { background: var(--teal-pale); border-color: var(--teal); color: var(--teal); }
+  .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .photo-counter {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+  }
+
+  /* THUMBNAILS ROW */
+  .thumbs-row {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    scrollbar-width: thin;
+  }
+  .thumbs-row::-webkit-scrollbar { height: 4px; }
+  .thumbs-row::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .thumb-item {
+    flex-shrink: 0;
+    width: 72px;
+    height: 72px;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: var(--transition);
+  }
+  .thumb-item img { width: 100%; height: 100%; object-fit: cover; }
+  .thumb-item.active { border-color: var(--teal); }
+  .thumb-item:hover { border-color: var(--accent-soft); }
+
+  /* ── EMPTY / LOADING ── */
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--ink-muted);
+  }
+  .empty-state svg { margin-bottom: 1rem; opacity: 0.3; }
+  .empty-state p { font-size: 0.95rem; }
+
+  .loading-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+  }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--teal);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 1rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--ink);
+    color: white;
+    padding: 0.7rem 1.4rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    z-index: 300;
+    transition: transform 0.3s ease;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+  #toast.error { background: #c0392b; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .app { padding: 1rem; }
+    .setup-grid { grid-template-columns: 1fr; }
+    .controls { flex-direction: column; align-items: stretch; }
+    .search-wrap { min-width: unset; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <span class="logo-title">Archivo Fotográfico</span>
+    <span class="logo-sub">Dermatopatología</span>
+  </div>
+  <div class="header-right">
+    <span id="auth-status">No conectado</span>
+    <button id="btn-auth" onclick="handleAuth()">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+      Conectar Google
+    </button>
+  </div>
+</header>
+
+<div class="app">
+
+  <!-- SETUP -->
+  <div id="setup-panel">
+    <h2>
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+      Configuración
+    </h2>
+    <div class="setup-grid">
+      <div class="field-group">
+        <label>ID del Google Sheet</label>
+        <input type="text" id="sheet-id" placeholder="1BxiMVs0...">
+      </div>
+      <div class="field-group">
+        <label>ID de la carpeta raíz en Drive</label>
+        <input type="text" id="folder-id" placeholder="1a2b3c4d...">
+      </div>
+      <button class="btn-primary" id="btn-load" onclick="loadData()" disabled>
+        Cargar datos
+      </button>
+    </div>
+    <p class="setup-hint">
+      El ID está en la URL: drive.google.com/drive/folders/<strong>[ID ACÁ]</strong> · 
+      <a href="#" onclick="saveConfig()">Guardar configuración</a>
+    </p>
+  </div>
+
+  <!-- CONTROLES -->
+  <div class="controls">
+    <div class="search-wrap">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="search-input" placeholder="Buscar por protocolo o diagnóstico..." oninput="filterCases()">
+    </div>
+    <div class="filter-wrap">
+      <select id="dx-filter" onchange="filterCases()">
+        <option value="">Todos los diagnósticos</option>
+      </select>
+    </div>
+    <div class="filter-wrap">
+      <select id="photo-filter" onchange="filterCases()">
+        <option value="">Con y sin fotos</option>
+        <option value="with">Solo con fotos</option>
+        <option value="without">Sin fotos</option>
+      </select>
+    </div>
+    <span class="stats-badge" id="stats-badge">0 casos</span>
+    <div class="view-toggle">
+      <button class="view-btn active" id="btn-grid" onclick="setView('grid')" title="Grilla">
+        <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M1 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1zM1 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1zM1 12a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1z"/></svg>
+      </button>
+      <button class="view-btn" id="btn-list" onclick="setView('list')" title="Lista">
+        <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- TAGS DIAGNÓSTICOS -->
+  <div class="dx-tags" id="dx-tags"></div>
+
+  <!-- GRILLA -->
+  <div id="cases-grid">
+    <div class="empty-state">
+      <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <p>Conectá Google y cargá tus datos para empezar</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL -->
+<div id="modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <div class="modal-protocol" id="modal-protocol"></div>
+        <div class="modal-dx" id="modal-dx"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div id="modal-no-photos" style="display:none; text-align:center; padding:2rem; color:var(--ink-muted);">
+        <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin-bottom:0.8rem; opacity:0.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <p>No hay fotos en la carpeta de Drive para este protocolo.</p>
+      </div>
+      <div id="modal-photos-wrap">
+        <img class="modal-big-photo" id="modal-big-img" src="" alt="">
+        <div class="modal-carousel-nav">
+          <button class="nav-btn" id="nav-prev" onclick="navPhoto(-1)">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <span class="photo-counter" id="photo-counter">1 / 1</span>
+          <button class="nav-btn" id="nav-next" onclick="navPhoto(1)">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </div>
+        <div class="thumbs-row" id="thumbs-row"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- Google API -->
+<script src="https://apis.google.com/js/api.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<script>
+// ═══════════════════════════════════════════════
+// CONFIGURACIÓN — Reemplazá con tus datos
+// ═══════════════════════════════════════════════
+const CLIENT_ID = '1039412624981-ugnsnc0ootejm0b9ptkd5d9316q89oma.apps.googleusercontent.com';
+const SCOPES = 'https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/drive.readonly';
+
+// ═══════════════════════════════════════════════
+// ESTADO
+// ═══════════════════════════════════════════════
+let tokenClient;
+let accessToken = null;
+let allCases = [];      // { protocol, diagnosis, photoCount, thumbnailUrl, photos: [] }
+let filteredCases = [];
+let activeDxTag = null;
+let currentView = 'grid';
+let currentPhotoIdx = 0;
+let modalPhotos = [];
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+window.onload = () => {
+  loadConfig();
+  google.accounts.id.initialize({ client_id: CLIENT_ID });
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: SCOPES,
+    callback: (resp) => {
+      if (resp.access_token) {
+        accessToken = resp.access_token;
+        setAuthStatus(true);
+        document.getElementById('btn-load').disabled = false;
+      }
+    }
+  });
+};
+
+function handleAuth() {
+  if (accessToken) {
+    accessToken = null;
+    setAuthStatus(false);
+    document.getElementById('btn-load').disabled = true;
+    showToast('Sesión cerrada');
+    return;
+  }
+  tokenClient.requestAccessToken();
+}
+
+function setAuthStatus(connected) {
+  const s = document.getElementById('auth-status');
+  const b = document.getElementById('btn-auth');
+  if (connected) {
+    s.textContent = '● Conectado';
+    s.style.color = '#6ecf8e';
+    b.textContent = 'Desconectar';
+    b.style.background = '#555';
+  } else {
+    s.textContent = 'No conectado';
+    s.style.color = 'rgba(255,255,255,0.55)';
+    b.innerHTML = `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg> Conectar Google`;
+    b.style.background = 'var(--accent)';
+  }
+}
+
+// ═══════════════════════════════════════════════
+// CONFIG LOCAL
+// ═══════════════════════════════════════════════
+function loadConfig() {
+  const cfg = JSON.parse(localStorage.getItem('dermo-fotos-config') || '{}');
+  if (cfg.sheetId) document.getElementById('sheet-id').value = cfg.sheetId;
+  if (cfg.folderId) document.getElementById('folder-id').value = cfg.folderId;
+}
+
+function saveConfig() {
+  const sheetId = document.getElementById('sheet-id').value.trim();
+  const folderId = document.getElementById('folder-id').value.trim();
+  localStorage.setItem('dermo-fotos-config', JSON.stringify({ sheetId, folderId }));
+  showToast('Configuración guardada ✓');
+}
+
+// ═══════════════════════════════════════════════
+// CARGA DE DATOS
+// ═══════════════════════════════════════════════
+async function loadData() {
+  const sheetId = document.getElementById('sheet-id').value.trim();
+  const folderId = document.getElementById('folder-id').value.trim();
+  if (!sheetId || !folderId) { showToast('Completá los dos IDs', true); return; }
+  if (!accessToken) { showToast('Primero conectá Google', true); return; }
+
+  saveConfig();
+  showLoading();
+
+  try {
+    // 1. Leer el Sheet
+    const sheetData = await fetchSheet(sheetId);
+
+    // 2. Listar carpetas de Drive
+    const folders = await listFolders(folderId);
+    const folderMap = {};
+    folders.forEach(f => { folderMap[f.name.trim().toUpperCase()] = f.id; });
+
+    // 3. Construir casos
+    allCases = [];
+    for (const row of sheetData) {
+      const protocol = (row[0] || '').trim();
+      const diagnosis = (row[1] || '').trim();
+      if (!protocol) continue;
+
+      const foldKey = protocol.toUpperCase();
+      const caseFolderId = folderMap[foldKey];
+      let photos = [];
+
+      if (caseFolderId) {
+        photos = await listPhotos(caseFolderId);
+      }
+
+      allCases.push({
+        protocol,
+        diagnosis,
+        photos,
+        photoCount: photos.length,
+        thumbnailUrl: photos.length > 0 ? photos[0].thumbnailUrl : null
+      });
+    }
+
+    buildDxFilter();
+    buildDxTags();
+    filteredCases = [...allCases];
+    renderGrid();
+    showToast(`${allCases.length} casos cargados ✓`);
+  } catch (e) {
+    console.error(e);
+    showToast('Error al cargar datos: ' + e.message, true);
+    showEmptyState('Error al cargar. Revisá los IDs e intentá de nuevo.');
+  }
+}
+
+async function fetchSheet(sheetId) {
+  // Asume que los datos están en la hoja 1, columnas A y B
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A2:B?key=&access_token=${accessToken}`;
+  const resp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A2:B`, {
+    headers: { 'Authorization': `Bearer ${accessToken}` }
+  });
+  if (!resp.ok) throw new Error('No se pudo leer el Sheet (HTTP ' + resp.status + ')');
+  const data = await resp.json();
+  return data.values || [];
+}
+
+async function listFolders(parentId) {
+  const q = encodeURIComponent(`'${parentId}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`);
+  const resp = await fetch(
+    `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)&pageSize=1000`,
+    { headers: { 'Authorization': `Bearer ${accessToken}` } }
+  );
+  if (!resp.ok) throw new Error('No se pudo leer la carpeta de Drive (HTTP ' + resp.status + ')');
+  const data = await resp.json();
+  return data.files || [];
+}
+
+async function listPhotos(folderId) {
+  const q = encodeURIComponent(`'${folderId}' in parents and mimeType contains 'image/' and trashed=false`);
+  const resp = await fetch(
+    `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,thumbnailLink,mimeType)&pageSize=100`,
+    { headers: { 'Authorization': `Bearer ${accessToken}` } }
+  );
+  if (!resp.ok) return [];
+  const data = await resp.json();
+  return (data.files || []).map(f => ({
+    id: f.id,
+    name: f.name,
+    thumbnailUrl: f.thumbnailLink ? f.thumbnailLink.replace('=s220', '=s400') : null,
+    viewUrl: `https://drive.google.com/file/d/${f.id}/view`
+  }));
+}
+
+// ═══════════════════════════════════════════════
+// FILTROS
+// ═══════════════════════════════════════════════
+function buildDxFilter() {
+  const sel = document.getElementById('dx-filter');
+  const dxSet = [...new Set(allCases.map(c => c.diagnosis).filter(Boolean))].sort();
+  sel.innerHTML = '<option value="">Todos los diagnósticos</option>';
+  dxSet.forEach(dx => {
+    const o = document.createElement('option');
+    o.value = dx;
+    o.textContent = dx;
+    sel.appendChild(o);
+  });
+}
+
+function buildDxTags() {
+  const container = document.getElementById('dx-tags');
+  // Top 10 diagnósticos más frecuentes
+  const counts = {};
+  allCases.forEach(c => { if (c.diagnosis) counts[c.diagnosis] = (counts[c.diagnosis] || 0) + 1; });
+  const top = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0, 12);
+  container.innerHTML = '';
+  top.forEach(([dx, cnt]) => {
+    const tag = document.createElement('button');
+    tag.className = 'dx-tag';
+    tag.innerHTML = `${dx} <span class="count">${cnt}</span>`;
+    tag.onclick = () => toggleDxTag(dx, tag);
+    container.appendChild(tag);
+  });
+}
+
+function toggleDxTag(dx, el) {
+  if (activeDxTag === dx) {
+    activeDxTag = null;
+    el.classList.remove('active');
+  } else {
+    document.querySelectorAll('.dx-tag').forEach(t => t.classList.remove('active'));
+    activeDxTag = dx;
+    el.classList.add('active');
+    document.getElementById('dx-filter').value = dx;
+  }
+  filterCases();
+}
+
+function filterCases() {
+  const q = document.getElementById('search-input').value.toLowerCase().trim();
+  const dx = document.getElementById('dx-filter').value;
+  const photoFilter = document.getElementById('photo-filter').value;
+
+  filteredCases = allCases.filter(c => {
+    const matchQ = !q || c.protocol.toLowerCase().includes(q) || c.diagnosis.toLowerCase().includes(q);
+    const matchDx = !dx || c.diagnosis === dx;
+    const matchPhoto = !photoFilter ||
+      (photoFilter === 'with' && c.photoCount > 0) ||
+      (photoFilter === 'without' && c.photoCount === 0);
+    return matchQ && matchDx && matchPhoto;
+  });
+
+  renderGrid();
+}
+
+// ═══════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════
+function renderGrid() {
+  const grid = document.getElementById('cases-grid');
+  const badge = document.getElementById('stats-badge');
+  badge.textContent = `${filteredCases.length} caso${filteredCases.length !== 1 ? 's' : ''}`;
+
+  if (filteredCases.length === 0) {
+    grid.innerHTML = `<div class="empty-state">
+      <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <p>No hay casos que coincidan con la búsqueda</p>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = filteredCases.map((c, i) => {
+    const thumbHtml = c.thumbnailUrl
+      ? `<img src="${c.thumbnailUrl}" alt="foto" loading="lazy">`
+      : `<svg class="no-thumb-icon" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
+
+    const countHtml = c.photoCount > 0
+      ? `<span class="thumb-count">📷 ${c.photoCount}</span>` : '';
+
+    return `<div class="case-card${c.photoCount === 0 ? ' no-photos' : ''}" onclick="openCase(${i})">
+      <div class="case-thumb">${thumbHtml}${countHtml}</div>
+      <div class="case-body">
+        <div class="case-protocol">${c.protocol}</div>
+        <div class="case-dx">${c.diagnosis || '<em style="color:var(--ink-muted)">Sin diagnóstico</em>'}</div>
+        <div class="case-meta">
+          <span class="photo-pill">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            ${c.photoCount} foto${c.photoCount !== 1 ? 's' : ''}
+          </span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showLoading() {
+  document.getElementById('cases-grid').innerHTML = `<div class="loading-state">
+    <div class="spinner"></div>
+    <p style="color:var(--ink-muted); font-size:0.9rem;">Cargando casos y fotos...</p>
+  </div>`;
+}
+
+function showEmptyState(msg) {
+  document.getElementById('cases-grid').innerHTML = `<div class="empty-state">
+    <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+    <p>${msg}</p>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════
+function openCase(idx) {
+  const c = filteredCases[idx];
+  document.getElementById('modal-protocol').textContent = c.protocol;
+  document.getElementById('modal-dx').textContent = c.diagnosis || 'Sin diagnóstico';
+  document.getElementById('modal').classList.add('open');
+
+  modalPhotos = c.photos;
+  currentPhotoIdx = 0;
+
+  if (c.photoCount === 0) {
+    document.getElementById('modal-no-photos').style.display = 'block';
+    document.getElementById('modal-photos-wrap').style.display = 'none';
+  } else {
+    document.getElementById('modal-no-photos').style.display = 'none';
+    document.getElementById('modal-photos-wrap').style.display = 'block';
+    renderModalPhoto();
+    renderThumbs();
+  }
+}
+
+function renderModalPhoto() {
+  const p = modalPhotos[currentPhotoIdx];
+  const img = document.getElementById('modal-big-img');
+  // Usar URL de visualización de Drive directa
+  img.src = p.thumbnailUrl
+    ? p.thumbnailUrl.replace('=s400', '=s1200')
+    : `https://drive.google.com/thumbnail?id=${p.id}&sz=w1200`;
+  img.onclick = () => window.open(p.viewUrl, '_blank');
+  img.style.cursor = 'zoom-in';
+
+  document.getElementById('photo-counter').textContent = `${currentPhotoIdx + 1} / ${modalPhotos.length}`;
+  document.getElementById('nav-prev').disabled = currentPhotoIdx === 0;
+  document.getElementById('nav-next').disabled = currentPhotoIdx === modalPhotos.length - 1;
+
+  document.querySelectorAll('.thumb-item').forEach((t, i) => {
+    t.classList.toggle('active', i === currentPhotoIdx);
+  });
+}
+
+function renderThumbs() {
+  const row = document.getElementById('thumbs-row');
+  row.innerHTML = modalPhotos.map((p, i) =>
+    `<div class="thumb-item${i === 0 ? ' active' : ''}" onclick="goToPhoto(${i})">
+      <img src="${p.thumbnailUrl || `https://drive.google.com/thumbnail?id=${p.id}&sz=w100`}" loading="lazy">
+    </div>`
+  ).join('');
+}
+
+function navPhoto(dir) {
+  currentPhotoIdx = Math.max(0, Math.min(modalPhotos.length - 1, currentPhotoIdx + dir));
+  renderModalPhoto();
+}
+
+function goToPhoto(idx) {
+  currentPhotoIdx = idx;
+  renderModalPhoto();
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.getElementById('modal-big-img').src = '';
+}
+
+document.getElementById('modal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('modal')) closeModal();
+});
+
+// Teclado
+document.addEventListener('keydown', (e) => {
+  if (!document.getElementById('modal').classList.contains('open')) return;
+  if (e.key === 'Escape') closeModal();
+  if (e.key === 'ArrowLeft') navPhoto(-1);
+  if (e.key === 'ArrowRight') navPhoto(1);
+});
+
+// ═══════════════════════════════════════════════
+// VISTA
+// ═══════════════════════════════════════════════
+function setView(v) {
+  currentView = v;
+  const grid = document.getElementById('cases-grid');
+  grid.classList.toggle('list-view', v === 'list');
+  document.getElementById('btn-grid').classList.toggle('active', v === 'grid');
+  document.getElementById('btn-list').classList.toggle('active', v === 'list');
+}
+
+// ═══════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = isError ? 'error show' : 'show';
+  setTimeout(() => { t.className = isError ? 'error' : ''; }, 3000);
+}
+</script>
+</body>
+</html>
