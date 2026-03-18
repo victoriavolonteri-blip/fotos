@@ -125,7 +125,7 @@
   }
   .setup-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr auto;
+    grid-template-columns: 1fr 1fr 1fr auto;
     gap: 1rem;
     align-items: end;
   }
@@ -605,6 +605,24 @@
         <label>ID de la carpeta raíz en Drive</label>
         <input type="text" id="folder-id" placeholder="1a2b3c4d...">
       </div>
+      <div class="field-group">
+        <label>Año a explorar</label>
+        <select id="year-select" style="width:100%;padding:0.6rem 0.9rem;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.85rem;color:var(--ink);background:var(--paper);">
+          <option value="all">Todos los años (lento)</option>
+          <option value="2026" selected>2026</option>
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+          <option value="2023">2023</option>
+          <option value="2022">2022</option>
+          <option value="2021">2021</option>
+          <option value="2020">2020</option>
+          <option value="2019">2019</option>
+          <option value="2018">2018</option>
+          <option value="2017">2017</option>
+          <option value="2016">2016</option>
+          <option value="2015">2015</option>
+        </select>
+      </div>
       <button class="btn-primary" id="btn-load" onclick="loadData()" disabled>
         Cargar datos
       </button>
@@ -791,29 +809,26 @@ async function loadData() {
   showLoading();
 
   try {
-    // 1. Leer todas las hojas de 2015 a 2026
-    const years = Array.from({length: 12}, (_, i) => 2015 + i);
+    // 1. Leer hojas según el año seleccionado
+    const selectedYear = document.getElementById('year-select').value;
+    const years = selectedYear === 'all'
+      ? Array.from({length: 12}, (_, i) => 2015 + i)
+      : [parseInt(selectedYear)];
+
     let sheetData = [];
-    let yearLog = [];
     for (const year of years) {
       try {
         const rows = await fetchSheet(sheetId, String(year));
-        if (rows.length > 0) {
-          sheetData = sheetData.concat(rows);
-          yearLog.push(year + ':' + rows.length);
-        }
-      } catch(e) {
-        // hoja no existe o error, se saltea
-      }
+        if (rows.length > 0) sheetData = sheetData.concat(rows);
+      } catch(e) { /* hoja no existe */ }
     }
-    console.log('Hojas leídas:', yearLog.join(', '));
 
-    // 2. Listar carpetas de Drive
+    // 2. Listar carpetas de Drive (solo nombres e IDs, sin fotos todavía)
     const folders = await listFolders(folderId);
     const folderMap = {};
     folders.forEach(f => { folderMap[f.name.trim().toUpperCase()] = f.id; });
 
-    // 3. Construir casos
+    // 3. Construir casos SIN cargar fotos (lazy loading)
     allCases = [];
     for (const row of sheetData) {
       const protocol = (row[0] || '').trim();
@@ -821,19 +836,16 @@ async function loadData() {
       if (!protocol) continue;
 
       const foldKey = protocol.toUpperCase();
-      const caseFolderId = folderMap[foldKey];
-      let photos = [];
-
-      if (caseFolderId) {
-        photos = await listPhotos(caseFolderId);
-      }
+      const caseFolderId = folderMap[foldKey] || null;
 
       allCases.push({
         protocol,
         diagnosis,
-        photos,
-        photoCount: photos.length,
-        thumbnailUrl: photos.length > 0 ? photos[0].thumbnailUrl : null
+        photos: [],
+        photoCount: caseFolderId ? '?' : 0,  // '?' = tiene carpeta pero no cargamos fotos aún
+        thumbnailUrl: null,
+        folderId: caseFolderId,
+        photosLoaded: false
       });
     }
 
@@ -841,7 +853,7 @@ async function loadData() {
     buildDxTags();
     filteredCases = [...allCases];
     renderGrid();
-    showToast(`${allCases.length} casos cargados ✓`);
+    showToast(`${allCases.length} casos de ${selectedYear === 'all' ? 'todos los años' : selectedYear} cargados ✓`);
   } catch (e) {
     console.error(e);
     showToast('Error al cargar datos: ' + e.message, true);
@@ -968,8 +980,8 @@ function renderGrid() {
       ? `<img src="${c.thumbnailUrl}" alt="foto" loading="lazy">`
       : `<svg class="no-thumb-icon" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`;
 
-    const countHtml = c.photoCount > 0
-      ? `<span class="thumb-count">📷 ${c.photoCount}</span>` : '';
+    const countHtml = c.folderId
+      ? `<span class="thumb-count">📁</span>` : '';
 
     return `<div class="case-card${c.photoCount === 0 ? ' no-photos' : ''}" onclick="openCase(${i})">
       <div class="case-thumb">${thumbHtml}${countHtml}</div>
@@ -1004,14 +1016,34 @@ function showEmptyState(msg) {
 // ═══════════════════════════════════════════════
 // MODAL
 // ═══════════════════════════════════════════════
-function openCase(idx) {
+async function openCase(idx) {
   const c = filteredCases[idx];
   document.getElementById('modal-protocol').textContent = c.protocol;
   document.getElementById('modal-dx').textContent = c.diagnosis || 'Sin diagnóstico';
   document.getElementById('modal').classList.add('open');
+  currentPhotoIdx = 0;
+
+  if (!c.folderId) {
+    document.getElementById('modal-no-photos').style.display = 'block';
+    document.getElementById('modal-photos-wrap').style.display = 'none';
+    return;
+  }
+
+  // Lazy load: cargar fotos solo cuando se abre el caso
+  if (!c.photosLoaded) {
+    document.getElementById('modal-no-photos').style.display = 'none';
+    document.getElementById('modal-photos-wrap').style.display = 'block';
+    document.getElementById('modal-big-img').src = '';
+    document.getElementById('thumbs-row').innerHTML = '<p style="color:var(--ink-muted);font-size:0.85rem">Cargando fotos...</p>';
+    document.getElementById('photo-counter').textContent = '...';
+
+    const photos = await listPhotos(c.folderId);
+    c.photos = photos;
+    c.photoCount = photos.length;
+    c.photosLoaded = true;
+  }
 
   modalPhotos = c.photos;
-  currentPhotoIdx = 0;
 
   if (c.photoCount === 0) {
     document.getElementById('modal-no-photos').style.display = 'block';
