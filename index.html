@@ -825,10 +825,9 @@ async function loadData() {
 
     // 2. Listar carpetas de Drive (solo nombres e IDs, sin fotos todavía)
     const folders = await listFolders(folderId);
-    const folderMap = {};
-    folders.forEach(f => { folderMap[f.name.trim().toUpperCase()] = f.id; });
 
     // 3. Construir casos SIN cargar fotos (lazy loading)
+    // Las carpetas pueden llamarse "25-1234 apellido" entonces buscamos por prefijo
     allCases = [];
     for (const row of sheetData) {
       const protocol = (row[0] || '').trim();
@@ -836,7 +835,8 @@ async function loadData() {
       if (!protocol) continue;
 
       const foldKey = protocol.toUpperCase();
-      const caseFolderId = folderMap[foldKey] || null;
+      const matchedFolder = folders.find(f => f.name.trim().toUpperCase().startsWith(foldKey));
+      const caseFolderId = matchedFolder ? matchedFolder.id : null;
 
       allCases.push({
         protocol,
