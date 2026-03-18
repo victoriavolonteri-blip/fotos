@@ -955,8 +955,8 @@ function filterCases() {
     const matchQ = !q || c.protocol.toLowerCase().includes(q) || c.diagnosis.toLowerCase().includes(q);
     const matchDx = !dx || c.diagnosis === dx;
     const matchPhoto = !photoFilter ||
-      (photoFilter === 'with' && c.photoCount > 0) ||
-      (photoFilter === 'without' && c.photoCount === 0);
+      (photoFilter === 'with' && (c.photoCount === '?' || c.photoCount > 0)) ||
+      (photoFilter === 'without' && c.photoCount === 0 && !c.folderId);
     return matchQ && matchDx && matchPhoto;
   });
 
