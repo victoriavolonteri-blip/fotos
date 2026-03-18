@@ -791,8 +791,17 @@ async function loadData() {
   showLoading();
 
   try {
-    // 1. Leer el Sheet
-    const sheetData = await fetchSheet(sheetId);
+    // 1. Leer todas las hojas de 2015 a 2026
+    const years = Array.from({length: 12}, (_, i) => 2015 + i);
+    let sheetData = [];
+    for (const year of years) {
+      try {
+        const rows = await fetchSheet(sheetId, String(year));
+        sheetData = sheetData.concat(rows);
+      } catch(e) {
+        // Si la hoja no existe, la saltea silenciosamente
+      }
+    }
 
     // 2. Listar carpetas de Drive
     const folders = await listFolders(folderId);
@@ -835,13 +844,12 @@ async function loadData() {
   }
 }
 
-async function fetchSheet(sheetId) {
-  // Asume que los datos están en la hoja 1, columnas A y B
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A2:B?key=&access_token=${accessToken}`;
-  const resp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A2:B`, {
+async function fetchSheet(sheetId, sheetName) {
+  const range = sheetName ? `${encodeURIComponent(sheetName)}!A2:B` : 'A2:B';
+  const resp = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}`, {
     headers: { 'Authorization': `Bearer ${accessToken}` }
   });
-  if (!resp.ok) throw new Error('No se pudo leer el Sheet (HTTP ' + resp.status + ')');
+  if (!resp.ok) throw new Error('HTTP ' + resp.status);
   const data = await resp.json();
   return data.values || [];
 }
